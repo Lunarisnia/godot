@@ -48,7 +48,7 @@ void Timer::_notification(int p_what) {
 			if (!processing || timer_process_callback == TIMER_PROCESS_PHYSICS || !is_processing_internal()) {
 				return;
 			}
-			time_left -= get_process_delta_time();
+			time_left -= get_process_delta_time() * time_scale;
 
 			if (time_left < 0) {
 				if (!one_shot) {
@@ -65,7 +65,7 @@ void Timer::_notification(int p_what) {
 			if (!processing || timer_process_callback == TIMER_PROCESS_IDLE || !is_physics_processing_internal()) {
 				return;
 			}
-			time_left -= get_physics_process_delta_time();
+			time_left -= get_physics_process_delta_time() * time_scale;
 
 			if (time_left < 0) {
 				if (!one_shot) {
@@ -142,6 +142,14 @@ double Timer::get_time_left() const {
 	return time_left > 0 ? time_left : 0;
 }
 
+void Timer::set_time_scale(double p_time_scale) {
+	time_scale = CLAMP(p_time_scale, 0.0, 1.0);
+}
+
+double Timer::get_time_scale() const {
+	return time_scale;
+}
+
 void Timer::set_timer_process_callback(TimerProcessCallback p_callback) {
 	if (timer_process_callback == p_callback) {
 		return;
@@ -210,6 +218,9 @@ void Timer::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_time_left"), &Timer::get_time_left);
 
+	ClassDB::bind_method(D_METHOD("set_time_scale"), &Timer::set_time_scale);
+	ClassDB::bind_method(D_METHOD("get_time_scale"), &Timer::get_time_scale);
+
 	ClassDB::bind_method(D_METHOD("set_timer_process_callback", "callback"), &Timer::set_timer_process_callback);
 	ClassDB::bind_method(D_METHOD("get_timer_process_callback"), &Timer::get_timer_process_callback);
 
@@ -221,6 +232,7 @@ void Timer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autostart"), "set_autostart", "has_autostart");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "paused", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE), "set_paused", "is_paused");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time_left", PROPERTY_HINT_NONE, "suffix:s", PROPERTY_USAGE_NONE), "", "get_time_left");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time_scale", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE), "set_time_scale", "get_time_scale");
 
 	BIND_ENUM_CONSTANT(TIMER_PROCESS_PHYSICS);
 	BIND_ENUM_CONSTANT(TIMER_PROCESS_IDLE);

@@ -37,6 +37,7 @@ class Timer : public Node {
 	GDCLASS(Timer, Node);
 
 	double wait_time = 1.0;
+	double time_scale = 1.0;
 	bool one_shot = false;
 	bool autostart = false;
 	bool processing = false;
@@ -72,6 +73,9 @@ public:
 	bool is_stopped() const;
 
 	double get_time_left() const;
+
+	void set_time_scale(double p_time_scale);
+	double get_time_scale() const;
 
 	PackedStringArray get_configuration_warnings() const override;
 
